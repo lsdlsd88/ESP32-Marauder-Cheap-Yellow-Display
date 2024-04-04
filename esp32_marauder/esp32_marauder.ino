@@ -162,6 +162,16 @@ void backlightOff() {
   #endif
 }
 
+#include <bb_captouch.h>
+
+// These defines are for a low cost ESP32 LCD board with the GT911 touch controller
+#define TOUCH_SDA 33
+#define TOUCH_SCL 32
+#define TOUCH_INT 21
+#define TOUCH_RST 25
+
+BBCapTouch bbct;
+const char *szNames[] = {"Unknown", "FT6x36", "GT911", "CST820"};
 
 void setup()
 {
@@ -202,11 +212,18 @@ void setup()
 
   Serial.println("ESP-IDF version is: " + String(esp_get_idf_version()));
 
+
+bbct.init(TOUCH_SDA, TOUCH_SCL, TOUCH_RST, TOUCH_INT);
+  int iType = bbct.sensorType();
+  Serial.printf("Sensor type = %s\n", szNames[iType]);
+  
   //#ifdef HAS_SCREEN
   //  Serial.println("Has Screen");
   //#else
   //  Serial.println("Does not have screen");
   //#endif
+
+  
 
   #ifdef HAS_SCREEN
     display_obj.RunSetup();
@@ -362,7 +379,8 @@ void setup()
   
     delay(2000);
   #endif
-
+  
+  
   #ifdef HAS_SCREEN
     menu_function_obj.RunSetup();
   #endif
@@ -374,6 +392,7 @@ void setup()
   //Serial.println(F("--------------------------------\n\n"));
   
   Serial.println(F("CLI Ready"));
+  
   cli_obj.RunSetup();
 }
 

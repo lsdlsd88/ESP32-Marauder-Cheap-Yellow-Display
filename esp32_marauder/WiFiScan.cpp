@@ -4035,7 +4035,7 @@ void WiFiScan::activeEapolSnifferCallback(void* buf, wifi_promiscuous_pkt_type_t
       uint16_t t_x = 0, t_y = 0; // To store the touch coordinates
   
       // Do the touch stuff
-      pressed = display_obj.tft.getTouch(&t_x, &t_y);
+      pressed = display_obj.tft.getTouchBBC(&t_x, &t_y);
   
       if (pressed) {
         Serial.print("Got touch | X: ");
@@ -4186,7 +4186,7 @@ void WiFiScan::activeEapolSnifferCallback(void* buf, wifi_promiscuous_pkt_type_t
       uint16_t t_x = 0, t_y = 0; // To store the touch coordinates
   
       // Do the touch stuff
-      pressed = display_obj.tft.getTouch(&t_x, &t_y);
+      pressed = display_obj.tft.getTouchBBC(&t_x, &t_y);
   
       if (pressed) {
         Serial.print("Got touch | X: ");
@@ -4647,7 +4647,7 @@ void WiFiScan::main(uint32_t currentTime)
     }
   }
   else if ((currentScanMode == WIFI_ATTACK_MIMIC)) {
-    // Need this for loop because getTouch causes ~10ms delay
+    // Need this for loop because getTouchBBC causes ~10ms delay
     // which makes beacon spam less effective
     for (int i = 0; i < access_points->size(); i++) {
       if (access_points->get(i).selected)
@@ -4681,7 +4681,7 @@ void WiFiScan::main(uint32_t currentTime)
   }
   else if ((currentScanMode == WIFI_ATTACK_BEACON_SPAM))
   {
-    // Need this for loop because getTouch causes ~10ms delay
+    // Need this for loop because getTouchBBC causes ~10ms delay
     // which makes beacon spam less effective
     for (int i = 0; i < 55; i++)
       broadcastRandomSSID(currentTime);
@@ -4739,7 +4739,7 @@ void WiFiScan::main(uint32_t currentTime)
   }
   else if ((currentScanMode == WIFI_ATTACK_RICK_ROLL))
   {
-    // Need this for loop because getTouch causes ~10ms delay
+    // Need this for loop because getTouchBBC causes ~10ms delay
     // which makes beacon spam less effective
     for (int i = 0; i < 7; i++)
     {

@@ -20,7 +20,7 @@ MenuFunctions::MenuFunctions()
 #ifdef HAS_ILI9341
   uint8_t MenuFunctions::updateTouch(uint16_t *x, uint16_t *y, uint16_t threshold) {
     if (!display_obj.headless_mode)
-      return display_obj.tft.getTouch(x, y, threshold);
+      return display_obj.tft.getTouchBBC(x, y, threshold);
     else
       return !display_obj.headless_mode;
   }
@@ -56,7 +56,7 @@ MenuFunctions::MenuFunctions()
     
     uint16_t touchX, touchY;
   
-    bool touched = display_obj.tft.getTouch(&touchX, &touchY, 600);
+    bool touched = display_obj.tft.getTouchBBC(&touchX, &touchY, 600);
   
     if(!touched)
     {
@@ -544,9 +544,9 @@ void MenuFunctions::main(uint32_t currentTime)
 
 
   // Pressed will be set true is there is a valid touch on the screen
-  int pre_getTouch = millis();
+  int pre_getTouchBBC = millis();
 
-  // getTouch causes a 10ms delay which makes beacon spam less effective
+  // getTouchBBC causes a 10ms delay which makes beacon spam less effective
   #ifdef HAS_ILI9341
     if (!this->disable_touch)
       pressed = this->updateTouch(&t_x, &t_y);
