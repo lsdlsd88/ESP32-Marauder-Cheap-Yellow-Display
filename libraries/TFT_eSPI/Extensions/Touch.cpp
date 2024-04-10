@@ -235,20 +235,21 @@ uint8_t TFT_eSPI::getTouchBBC(uint16_t *x, uint16_t *y, uint16_t threshold){
 bool touched=false;
 
   if (bbct.getSamples(&ti)) {
-      Serial.print("Touch ");Serial.print(1);Serial.print(": ");;
-      Serial.print("  x: ");Serial.print(ti.x[0]);x_tmp=ti.x[0];
-      Serial.print("  y: ");Serial.print(ti.y[0]);y_tmp=ti.y[0];
-      Serial.println(' ');
+      //Serial.print("Touch ");Serial.print(1);Serial.print(": ");;
+      //Serial.print("  x: ");Serial.print(ti.x[0]);
+      x_tmp=ti.x[0];
+      //Serial.print("  y: ");Serial.print(ti.y[0]);
+      y_tmp=ti.y[0];
+      //Serial.println(' ');
       touched=true;
-  Serial.println(touched);
+  
+  convertRawXYBBC(&x_tmp, &y_tmp);  
   } // if touch event happened
-
-
-  //convertRawXY(&x_tmp, &y_tmp);
 
   
   if (touched) {
-  if (x_tmp >= _width || y_tmp >= _height) return false;
+  
+  //if (x_tmp >= _width || y_tmp >= _height) return false;
 }
   _pressX = x_tmp;
   _pressY = y_tmp;
@@ -256,6 +257,35 @@ bool touched=false;
   *y = _pressY;
   return touched;
 }
+
+
+/***************************************************************************************
+** Function name:           convertRawXYBBC
+** Description:             convert raw touch x,y values to screen coordinates 
+***************************************************************************************/
+void TFT_eSPI::convertRawXYBBC(uint16_t *x, uint16_t *y)
+{
+  uint16_t x_tmp = *x, y_tmp = *y, xx, yy;
+
+  if(!touchCalibration_rotate){
+    xx=(x_tmp);
+    yy=(y_tmp);
+    if(touchCalibration_invert_x)
+      xx = _width - xx;
+    if(touchCalibration_invert_y)
+      yy = _height - yy;
+  } else {
+    xx=(y_tmp);
+    yy=(x_tmp);
+    if(touchCalibration_invert_x)
+      xx = _width - xx;
+    if(touchCalibration_invert_y)
+      yy = _height - yy;
+  }
+  *x = xx;
+  *y = yy;
+}
+
 
 /***************************************************************************************
 ** Function name:           convertRawXY
@@ -309,19 +339,19 @@ void TFT_eSPI::calibrateTouch(uint16_t *parameters, uint32_t color_fg, uint32_t 
         drawLine(0, 0, size , size, color_fg);
         break;
       case 1: // bot left
-        drawLine(0, _height-size-1, 0, _height-1, color_fg);
-        drawLine(0, _height-1, size, _height-1, color_fg);
-        drawLine(size, _height-size-1, 0, _height-1 , color_fg);
+        drawLine(0, _height-size-2, 0, _height-2, color_fg);
+        drawLine(0, _height-2, size, _height-2, color_fg);
+        drawLine(size, _height-size-2, 0, _height-2 , color_fg);
         break;
       case 2: // up right
-        drawLine(_width-size-1, 0, _width-1, 0, color_fg);
-        drawLine(_width-size-1, size, _width-1, 0, color_fg);
-        drawLine(_width-1, size, _width-1, 0, color_fg);
+        drawLine(_width-size-2, 0, _width-2, 0, color_fg);
+        drawLine(_width-size-2, size, _width-2, 0, color_fg);
+        drawLine(_width-2, size, _width-2, 0, color_fg);
         break;
       case 3: // bot right
-        drawLine(_width-size-1, _height-size-1, _width-1, _height-1, color_fg);
-        drawLine(_width-1, _height-1-size, _width-1, _height-1, color_fg);
-        drawLine(_width-1-size, _height-1, _width-1, _height-1, color_fg);
+        drawLine(_width-size-2, _height-size-2, _width-2, _height-2, color_fg);
+        drawLine(_width-2, _height-2-size, _width-2, _height-2, color_fg);
+        drawLine(_width-2-size, _height-2, _width-2, _height-2, color_fg);
         break;
       }
 
@@ -396,9 +426,12 @@ void TFT_eSPI::calibrateTouch(uint16_t *parameters, uint32_t color_fg, uint32_t 
 ** Description:             generates calibration parameters for touchscreen. 
 ***************************************************************************************/
 void TFT_eSPI::calibrateTouchBBC(uint16_t *parameters, uint32_t color_fg, uint32_t color_bg, uint8_t size){
-  int16_t values[] = {0,0,0,0,0,0,0,0};
+   int16_t values[] = {0,0,0,0,0,0,0,0};
   uint16_t x_tmp, y_tmp;
 
+touchCalibration_rotate = 0;
+touchCalibration_invert_x = 0;
+touchCalibration_invert_y = 0;
 
 
   for(uint8_t i = 0; i<4; i++){
@@ -416,33 +449,33 @@ void TFT_eSPI::calibrateTouchBBC(uint16_t *parameters, uint32_t color_fg, uint32
         drawLine(0, 0, size , size, color_fg);
         break;
       case 1: // bot left
-        drawLine(0, _height-size-1, 0, _height-1, color_fg);
-        drawLine(0, _height-1, size, _height-1, color_fg);
-        drawLine(size, _height-size-1, 0, _height-1 , color_fg);
+        drawLine(0, _height-size-2, 0, _height-2, color_fg);
+        drawLine(0, _height-2, size, _height-2, color_fg);
+        drawLine(size, _height-size-2, 0, _height-2 , color_fg);
         break;
       case 2: // up right
-        drawLine(_width-size-1, 0, _width-1, 0, color_fg);
-        drawLine(_width-size-1, size, _width-1, 0, color_fg);
-        drawLine(_width-1, size, _width-1, 0, color_fg);
+        drawLine(_width-size-2, 0, _width-2, 0, color_fg);
+        drawLine(_width-size-2, size, _width-2, 0, color_fg);
+        drawLine(_width-2, size, _width-2, 0, color_fg);
         break;
       case 3: // bot right
-        drawLine(_width-size-1, _height-size-1, _width-1, _height-1, color_fg);
-        drawLine(_width-1, _height-1-size, _width-1, _height-1, color_fg);
-        drawLine(_width-1-size, _height-1, _width-1, _height-1, color_fg);
+        drawLine(_width-size-2, _height-size-2, _width-2, _height-2, color_fg);
+        drawLine(_width-2, _height-2-size, _width-2, _height-2, color_fg);
+        drawLine(_width-2-size, _height-2, _width-2, _height-2, color_fg);
         break;
       }
 
     // user has to get the chance to release
     if(i>0) delay(1000);
 
-    for(uint8_t j= 0; j<8; j++){
+    
       // Use a lower detect threshold as corners tend to be less sensitive
       while(!validTouchBBC(&x_tmp, &y_tmp, Z_THRESHOLD/2));
-      values[i*2  ] += x_tmp;
-      values[i*2+1] += y_tmp;
-      }
-    values[i*2  ] /= 8;
-    values[i*2+1] /= 8;
+      values[i*2  ] = x_tmp;
+      values[i*2+1] = y_tmp;
+ 
+    //values[i*2  ] /= 8;
+    //values[i*2+1] /= 8;
   }
 
 
@@ -496,7 +529,6 @@ void TFT_eSPI::calibrateTouchBBC(uint16_t *parameters, uint32_t color_fg, uint32
     parameters[4] = touchCalibration_rotate | (touchCalibration_invert_x <<1) | (touchCalibration_invert_y <<2);
   }
 }
-
 
 /***************************************************************************************
 ** Function name:           setTouch

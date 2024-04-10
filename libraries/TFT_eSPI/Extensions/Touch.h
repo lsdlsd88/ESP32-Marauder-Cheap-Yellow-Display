@@ -7,7 +7,8 @@
            // Get raw z (i.e. pressure) ADC value from touch controller
   uint16_t getTouchRawZ(void);
            // Convert raw x,y values to calibrated and correctly rotated screen coordinates
-  void     convertRawXY(uint16_t *x, uint16_t *y);
+  void     convertRawXY(uint16_t *x, uint16_t *y);// Convert raw x,y values to calibrated and correctly rotated screen coordinates
+  void     convertRawXYBBC(uint16_t *x, uint16_t *y);
            // Get the screen touch coordinates, returns true if screen has been touched
            // if the touch coordinates are off screen then x and y are not updated
            // The returned value can be treated as a bool type, false or 0 means touch not detected
